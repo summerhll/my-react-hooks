@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import './App.css';
 
 const BatteryContext = React.createContext(60);
@@ -12,25 +11,20 @@ class Leaf extends Component {
         { battery => 
         (
           <OnlineContext.Consumer>
-            { online => <h1> Battery : {battery}, Online : {String(online)},  </h1>}
+            { online => <h1> Battery : {battery}, Online : {String(online)}</h1>}
 
           </OnlineContext.Consumer>
         )
        }
       </BatteryContext.Consumer>
-
-      
     );
-
   }
 }
-
 class Middle extends Component {
   render() {
     return <Leaf />
   }
 }
-
 class App extends Component {
   state = {
     battery: 60,
@@ -44,16 +38,12 @@ class App extends Component {
            <button type="button" onClick={() => this.setState({ battery: battery - 1 })}> 减少</button>
            <p></p>
           <button type="button" onClick={() => this.setState({ online: !online })}> 取反</button> 
-      
          
           <Middle />
         </OnlineContext.Provider>
       </BatteryContext.Provider>
-
-
     )
   }
-
 }
 
 
