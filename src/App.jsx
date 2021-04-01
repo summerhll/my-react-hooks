@@ -1,76 +1,94 @@
 // eslint-disable-next-line
-import React, { Component, PureComponent, memo } from 'react'; 
+import React, { Component, useEffect, useState} from 'react'; 
 import './App.css';
-
-
-//方法一：使用Component和shouldComponentUpdate 来判断是否需要更新Foo组件
-// class Foo extends Component{
-//   shouldComponentUpdate(nextProps, nextState){
-//     if(nextProps.name === this.props.name){
-//       return false;
-//     }
-//     return true;
-//   }
-//   render(){
-//     console.log('Foo render...');
-//     return null;
-//   }
-// }
-
-//方法二：使用PureComponent 让Foo组件在数据修改后才更新
-// class Foo extends PureComponent{
-//   render(){
-//     console.log('Foo render...');
-//     return null;
-//   }
-// }
-
-//方法三: memo 用于函数式组件
-const Foo = memo(function Foo(props) {
-  console.log('Foo render...');
-  return <div>{props.person.age}</div>;
-})
-
-
-
-class App extends Component {
-
+class App2 extends Component {
   state = {
     count: 0,
-    person: {
-      age: 1
+    size : {
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight
     }
-
   }
 
-  callback = () => { //将callback写成类组件，绑定this
+  onResize = ()=>{
+    this.setState({
+      size: {
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight
+    }
+    })
 
+  }
+  componentDidMount(){
+    document.title = this.state.count;
+    window.addEventListener("resize", this.onResize, false)
+  }
+
+  componentWillUnmount(){
+    window.removeEventListener("resize", this.onResize, false)
+  }
+
+  componentDidUpdate(){
+    document.title= this.state.count;
   }
 
   render() {
-    const person = this.state.person
+    const { count,size}  = this.state;
     return (
-      <div>
-        <button onClick={() => {
-          person.age++;
-          this.setState({ person })  //这一句加上后Foo组件不会触发更新
-        }}>修改</button>
-
-        {/* <Foo name = "Mike" ></Foo> */}
-
-        {/* 这一句加上后Foo组件会触发更新，因为每次cb都创建了一个新函数 */}
-        {/* <Foo name = "Mike" cb = { ()=> {}} ></Foo> */}
-
-
-        {/* 这一句加上后Foo组件不会触发更新*/}
-        {/* <Foo name = "Mike" cb = { this.callback} ></Foo> */}
-
-        {/* memo */}
-        <Foo person={person} ></Foo>
-      </div>
+      <button onClick = { ()=> { this.setState({ count : count + 1})}}> 
+      Click ({count})
+      Size({size.width} * {size.height})
+      </button>
     );
   }
 }
 
+function App(props){
+  //const [count, setCount] = useState(0);
+
+  const [count, setCount] = useState(()=>{
+    console.log("initial count...");
+    return props.defaultCount || 0; //只触发一次
+  });
+
+  const [size, setSize] = useState({
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientHeight
+  });
+
+  const onResize = ()=>{
+    setSize({ 
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight
+    })
+  };
+  
+   // useEffect的第二个参数是一个可选的数组，重新渲染时，只有在数组的每一项都不变的情况下，useEffect才不会执行。
+  useEffect(()=>{
+    console.log("count: " + count)
+  }, [count]); //在count改变时，useEffect执行
+
+
+  useEffect(()=>{
+    document.title = count;
+  });  //useEffect每次渲染时执行一次
+
+ 
+  useEffect(()=>{
+    window.addEventListener("resize", onResize, false);
+    return ()=>{ //effect返回函数, React将会在执行清楚操作时调用它清除它
+      window.removeEventListener("resize", onResize, false);
+    }
+  }, []); //useEffect只执行一次
+
+
+  return (
+    <button onClick = { ()=> { setCount( count + 1 )}}>
+       ClickAPP({count})   
+       Size({size.width} * {size.height})
+    </button>
+  );
+
+}
 
 export default App;
