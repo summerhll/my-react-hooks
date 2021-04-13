@@ -1,44 +1,67 @@
 // eslint-disable-next-line
-import React, { Component, useState, useMemo } from 'react';
+import React, {  useState,  useCallback, useRef, PureComponent, useEffect} from 'react';
 import './App.css';
 
+class Child extends PureComponent {
+  speak(){
+    console.log(`counter: ${this.props.count}`)
+  }
 
-
-
-
-
-
-function Counter(props){
-  return (
-    <h1>{props.count}</h1>
-  )
+  render() {
+    const { props } = this;
+    return (
+      <div>
+        <button onClick={props.changeCount}>Increment Count</button>
+      </div>
+    )
+  }
 }
 
-//useMemo 用于性能优化，在渲染时执行
-//useEffect 在渲染后执行
-function App(props) {
+
+function App() {
   const [count, setCount] = useState(0);
+  const [name, setName] = useState('fruit');
+  const childRef = useRef();
+  const intervalRef = useRef(); //存储不同渲染周期之前需要共享的数据
 
-  const double = useMemo(() => {
-    return count * 2;
-  }, [count === 3]);
+  // useCallback
+  const changeCount = useCallback(() => {
+    setCount(count + 1)
+    // console.log(childRef.current); //访问dom元素
+    childRef.current.speak(); //执行子组件方法
+  }, [count]);
+
+  const changeName = () => {
+    setName(name + 1)
+  };
+
+  useEffect(() => {
+    intervalRef.current = setInterval(()=>{
+      setCount(count => count + 1);
+    }, 1000)
+
+  }, [])
+
+  useEffect(() => {
+    if(count >= 10){
+      clearInterval(intervalRef.current);
+    }
+  });
 
 
-  //useMemo可以依赖另一个useMemo，但是不要循环依赖
-  const half = useMemo(() =>{
-    return double / 4;
-  }, [double]);
-
+  //ref 要用于类组件
   return (
     <div>
-      <button type="button"
-        onClick={() => { setCount(count + 1) }}>
-        Click ({count}), double : ({double}), half : ({half})
-      </button>
-        <Counter count = {count}/>
+      <div>Count is {count}</div>
+      <div>Name is {name}</div>
+      <br />
+      <div>
+        <button onClick={changeName}>Change Name</button>
+        
+        <Child ref={childRef} changeCount={changeCount} count = {count}/>
+      </div>
     </div>
   )
-
 }
 
 export default App;
