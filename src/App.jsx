@@ -1,40 +1,48 @@
 // eslint-disable-next-line
-import React, {  useState,  useCallback, useRef, PureComponent, useEffect} from 'react';
+import React, {  useState,  useEffect, useRef, useCallback} from 'react';
 import './App.css';
 
-class Child extends PureComponent {
-  speak(){
-    console.log(`counter: ${this.props.count}`)
-  }
+//自定义hook, 复用代码
+function useSize(){
+  const [size, setSize] = useState({
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientWidth
+  });
 
-  render() {
-    const { props } = this;
-    return (
-      <div>
-        <button onClick={props.changeCount}>Increment Count</button>
-      </div>
-    )
-  }
+  const onResize = useCallback(()=>{
+    setSize({
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientWidth
+    });
+  }, []);
+
+  
+  useEffect(()=>{
+    window.addEventListener('resize', onResize, false);
+    return ()=>{
+      window.removeEventListener('resize', onResize, false);
+    }
+  })
+
+  return [size];
 }
 
 
-function App() {
-  const [count, setCount] = useState(0);
-  const [name, setName] = useState('fruit');
-  const childRef = useRef();
+
+//自定义Hook： 返回jsx
+function useCounteJsx(count){
+  const [size] = useSize();
+  return (
+    <div>
+      <button >Increment Count {count}, {size.width} * {size.height}</button>
+    </div>
+  )
+}
+
+//将count相关的处理逻辑写在一个自定义hook中
+function useCount(defaultCount){
+  const [count, setCount] = useState(defaultCount);
   const intervalRef = useRef(); //存储不同渲染周期之前需要共享的数据
-
-  // useCallback
-  const changeCount = useCallback(() => {
-    setCount(count + 1)
-    // console.log(childRef.current); //访问dom元素
-    childRef.current.speak(); //执行子组件方法
-  }, [count]);
-
-  const changeName = () => {
-    setName(name + 1)
-  };
-
   useEffect(() => {
     intervalRef.current = setInterval(()=>{
       setCount(count => count + 1);
@@ -48,17 +56,36 @@ function App() {
     }
   });
 
+  return  [count, setCount];
+}
+
+
+
+function App() {
+ 
+  const [count] = useCount(0);
+  const [name, setName] = useState('fruit');
+  
+  const CounteJsx= useCounteJsx(count);
+  const [size] = useSize();
+ 
+
+  const changeName = () => {
+    setName(name + 1)
+  };
+
 
   //ref 要用于类组件
   return (
     <div>
+      <div>size is : {size.width} * {size.height}</div>>
       <div>Count is {count}</div>
       <div>Name is {name}</div>
       <br />
       <div>
         <button onClick={changeName}>Change Name</button>
         
-        <Child ref={childRef} changeCount={changeCount} count = {count}/>
+      {CounteJsx}
       </div>
     </div>
   )
