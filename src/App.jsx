@@ -1,59 +1,41 @@
 // eslint-disable-next-line
-import React, { Component, useState, createContext, useContext } from 'react';
+import React, { Component, useState, useMemo } from 'react';
 import './App.css';
 
 
-const CountContext = createContext();
 
 
-//方法一： CountContext.Consumer
-class Foo extends Component {
-  render() {
-    return (
-      <CountContext.Consumer>
-        {
-          count => <h1>{count}</h1>
-        }
-      </CountContext.Consumer>
-    )
-  }
-}
 
 
-//方法二： contextType
-class Bar extends Component {
-  static contextType = CountContext
-  render() {
-    const count = this.context;
-    return (
-     
-          <h1>{count}</h1>
-      
-    )
-  }
-}
 
-//方法二： useContext
-function Counter(){
-  const count = useContext(CountContext);
+function Counter(props){
   return (
-    <h1>{count}</h1>
+    <h1>{props.count}</h1>
   )
 }
 
+//useMemo 用于性能优化，在渲染时执行
+//useEffect 在渲染后执行
 function App(props) {
   const [count, setCount] = useState(0);
+
+  const double = useMemo(() => {
+    return count * 2;
+  }, [count === 3]);
+
+
+  //useMemo可以依赖另一个useMemo，但是不要循环依赖
+  const half = useMemo(() =>{
+    return double / 4;
+  }, [double]);
+
   return (
     <div>
       <button type="button"
         onClick={() => { setCount(count + 1) }}>
-        Click ({count})
+        Click ({count}), double : ({double}), half : ({half})
       </button>
-      <CountContext.Provider value={count}>
-        <Foo/>
-        <Bar/>
-        <Counter/>
-      </CountContext.Provider>
+        <Counter count = {count}/>
     </div>
   )
 
