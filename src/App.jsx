@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import React, { Component, useState, createContext } from 'react';
+import React, { Component, useState, createContext, useContext } from 'react';
 import './App.css';
 
 
@@ -7,20 +7,6 @@ const CountContext = createContext();
 
 
 //方法一： CountContext.Consumer
-// class Foo extends Component {
-//   render() {
-//     return (
-//       <CountContext.Consumer>
-//         {
-//           count => <h1>{count}</h1>
-//         }
-//       </CountContext.Consumer>
-//     )
-//   }
-// }
-
-
-//方法二： CountContext.Consumer
 class Foo extends Component {
   render() {
     return (
@@ -33,6 +19,28 @@ class Foo extends Component {
   }
 }
 
+
+//方法二： contextType
+class Bar extends Component {
+  static contextType = CountContext
+  render() {
+    const count = this.context;
+    return (
+     
+          <h1>{count}</h1>
+      
+    )
+  }
+}
+
+//方法二： useContext
+function Counter(){
+  const count = useContext(CountContext);
+  return (
+    <h1>{count}</h1>
+  )
+}
+
 function App(props) {
   const [count, setCount] = useState(0);
   return (
@@ -43,6 +51,8 @@ function App(props) {
       </button>
       <CountContext.Provider value={count}>
         <Foo/>
+        <Bar/>
+        <Counter/>
       </CountContext.Provider>
     </div>
   )
