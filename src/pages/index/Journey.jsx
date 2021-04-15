@@ -1,5 +1,5 @@
 import React from 'react';
-import switchImg from './images/switch.svg';
+import switchImg from '../../images/switch.svg';
 import './Journey.css';
 
 export default function Journey(props) {
