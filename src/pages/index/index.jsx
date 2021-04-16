@@ -24,7 +24,7 @@ import {
     hideDateSelector,
     setDepartDate,
     toggleHighSpeed,
-} from './actions';
+} from '../../redux/actions';
 
 function App(props) {
     const {
@@ -109,12 +109,12 @@ function App(props) {
             <div className="header-wrapper">
                 <Header title="火车票" onBack={onBack} />
             </div>
-            <form action="./query.html" className="form">
+            <div  className="form">
                 <Journey from={from} to={to} {...cbs} />
                 <DepartDate time={departDate} {...departDateCbs} />
                 <HighSpeed highSpeed={highSpeed} {...highSpeedCbs} />
                 <Submit />
-            </form>
+            </div>
             <CitySelector
                 show={isCitySelectorVisible}
                 cityData={cityData}

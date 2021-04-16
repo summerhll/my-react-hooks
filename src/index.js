@@ -6,7 +6,7 @@ import 'normalize.css/normalize.css';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
-import store from './pages/index/store';
+import store from './redux/store';
 import App from './App.jsx'
 
 ReactDOM.render(
