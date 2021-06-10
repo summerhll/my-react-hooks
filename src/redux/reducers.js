@@ -10,6 +10,7 @@ import {
     ACTION_SET_DEPART_DATE,
 } from './actions';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
     from(state = '北京', action) {
         const { type, payload } = action;

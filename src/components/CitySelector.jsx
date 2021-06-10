@@ -188,7 +188,7 @@ const CitySelector = memo(function CitySelector(props) {
         }
 
         fetchCityData();
-    }, [show, cityData, isLoading]);
+    }, [show, cityData, isLoading]); //eslint-disable-line
 
     const toAlpha = useCallback(alpha => {
         document.querySelector(`[data-cate='${alpha}']`).scrollIntoView();

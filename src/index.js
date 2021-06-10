@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
- import { Router, Route, BrowserRouter, /* , Redirect */ } from 'react-router-dom'
 import 'normalize.css/normalize.css';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -12,7 +11,6 @@ import App from './App.jsx'
 ReactDOM.render(
   <Provider store={store}>
     <App/>
-   
   </Provider>,
   document.getElementById('root')
 );

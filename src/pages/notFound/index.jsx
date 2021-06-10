@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link} from 'react-router-dom'
+
 
 
 class NotFound extends React.Component{
@@ -11,8 +11,7 @@ class NotFound extends React.Component{
     render(){
         return (
             <div>
-               <Link to="/ticket">火车票 </Link>
-              
+                页面找不到～～～
                
             </div>
         );
